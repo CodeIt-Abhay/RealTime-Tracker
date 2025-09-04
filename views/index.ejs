@@ -2,22 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Real-Time Tracking App</title>
+  <title>🌍 Live Tracker & Chat</title>
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 </head>
 <body>
-  <div id="map"></div>
+  <h2>🌍 Live User Map & Chat</h2>
 
-  <!-- Chat Box -->
-  <div id="chat">
-    <div id="messages"></div>
-    <input id="messageInput" placeholder="Type a message..." />
-    <button id="sendBtn">Send</button>
+  <!-- Username Popup -->
+  <div id="username-popup">
+    <div class="popup-content">
+      <h3>Enter your name</h3>
+      <form id="username-form">
+        <input id="username-input" type="text" placeholder="Your name" required />
+        <button type="submit">Join</button>
+      </form>
+    </div>
   </div>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Map container -->
+  <div id="map-container">
+    <div id="map"></div>
+  </div>
+
+  <!-- Chat container -->
+  <div id="chat-box">
+    <ul id="chat-messages"></ul>
+    <form id="chat-form">
+      <input id="chat-input" type="text" placeholder="Type a message..." />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <!-- Scripts -->
   <script src="/socket.io/socket.io.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="/js/script.js"></script>
 </body>
 </html>

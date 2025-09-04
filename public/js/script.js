@@ -1,73 +1,135 @@
 const socket = io();
 const markers = {};
-let map;
+let bounds = L.latLngBounds([]);
+let username = null;
 
-// Ask for username
-const username = prompt("Enter your name:") || "Anonymous";
-
-// Share location
-if (navigator.geolocation) {
-  navigator.geolocation.watchPosition(
-    (position) => {
-      const { latitude, longitude } = position.coords;
-      socket.emit("send-location", { latitude, longitude, username });
-    },
-    (error) => console.error("Error obtaining location", error),
-    { enableHighAccuracy: true }
-  );
+// Colors
+const colors = ["red", "blue", "green", "orange", "purple", "darkcyan"];
+const userColors = {};
+function getRandomColor() {
+  return colors[Math.floor(Math.random() * colors.length)];
 }
 
-// Initialize map
+// Custom marker
+function createUserIcon(color, username) {
+  return L.divIcon({
+    className: "custom-marker",
+    html: `
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+        <div style="
+          width: 0; 
+          height: 0; 
+          border-left: 12px solid transparent;
+          border-right: 12px solid transparent;
+          border-top: 20px solid ${color};
+          transform: rotate(180deg);
+        "></div>
+        <div style="
+          background-color: ${color};
+          border: 2px solid white;
+          border-radius: 50%;
+          width: 18px;
+          height: 18px;
+          margin-top: -10px;
+          z-index: 10;
+        "></div>
+        <div style="
+          font-size: 11px;
+          font-weight: bold;
+          color: black;
+          margin-top: 2px;
+          text-align: center;
+        ">
+          ${username}
+        </div>
+      </div>
+    `,
+    iconSize: [30, 42],
+    iconAnchor: [15, 42]
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  map = L.map("map").setView([20.5937, 78.9629], 5); // India as default center
-
+  // Map
+  const map = L.map("map").setView([20.5937, 78.9629], 5);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "&copy; OpenStreetMap contributors",
+    attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
-});
 
-// Receive location updates
-socket.on("receive-location", ({ id, latitude, longitude, username, color }) => {
-  if (markers[id]) {
-    markers[id].setLatLng([latitude, longitude]);
-  } else {
-    const icon = L.divIcon({
-      className: "custom-marker",
-      html: `<div style="background:${color};
-                      width:20px;height:20px;
-                      border-radius:50%;
-                      border:2px solid white;"></div>`
-    });
+  // Username popup
+  const usernamePopup = document.getElementById("username-popup");
+  const usernameForm = document.getElementById("username-form");
+  const usernameInput = document.getElementById("username-input");
 
-    markers[id] = L.marker([latitude, longitude], { icon }).addTo(map);
-    markers[id].bindPopup(`<b>${username}</b>`).openPopup();
+  usernameForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    username = usernameInput.value.trim();
+    if (username) {
+      socket.emit("set-username", username);
+      usernamePopup.style.display = "none";
+    }
+  });
+
+  // Location
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        if (username) {
+          socket.emit("send-location", { latitude, longitude });
+        }
+      },
+      (err) => console.error("Geolocation error:", err),
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+    );
   }
-});
 
-// Remove disconnected user markers
-socket.on("user-disconnected", (id) => {
-  if (markers[id]) {
-    map.removeLayer(markers[id]);
-    delete markers[id];
-  }
-});
+  // Receive locations
+  socket.on("receive-location", (data) => {
+    const { id, username, latitude, longitude } = data;
 
-// Chat functionality
-const messagesDiv = document.getElementById("messages");
-const messageInput = document.getElementById("messageInput");
-const sendBtn = document.getElementById("sendBtn");
+    if (!userColors[id]) {
+      userColors[id] = getRandomColor();
+    }
 
-sendBtn.addEventListener("click", () => {
-  const msg = messageInput.value;
-  if (msg.trim()) {
-    socket.emit("chat-message", { username, message: msg });
-    messageInput.value = "";
-  }
-});
+    if (!markers[id]) {
+      markers[id] = L.marker([latitude, longitude], {
+        icon: createUserIcon(userColors[id], username)
+      }).addTo(map);
+    } else {
+      markers[id].setLatLng([latitude, longitude]);
+    }
 
-socket.on("chat-message", ({ username, message }) => {
-  const msgEl = document.createElement("div");
-  msgEl.innerHTML = `<b>${username}:</b> ${message}`;
-  messagesDiv.appendChild(msgEl);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    bounds.extend([latitude, longitude]);
+    map.fitBounds(bounds, { padding: [50, 50] });
+  });
+
+  // Remove disconnected
+  socket.on("user-disconnected", (id) => {
+    if (markers[id]) {
+      map.removeLayer(markers[id]);
+      delete markers[id];
+    }
+  });
+
+  // Chat
+  const chatForm = document.getElementById("chat-form");
+  const chatMessages = document.getElementById("chat-messages");
+
+  chatForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = document.getElementById("chat-input");
+    const msg = input.value.trim();
+    if (msg && username) {
+      socket.emit("chat-message", msg);
+      input.value = "";
+    }
+  });
+
+  socket.on("chat-message", (data) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>${data.username}:</strong> ${data.message}`;
+    chatMessages.appendChild(li);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
 });
