@@ -14,13 +14,13 @@ RealTime-Tracker is a Node.js + Express + EJS web application that enables real-
 
 ## 📁 Repository Structure  
  ```/
- ├── app.js # main server file
- ├── package.json # Node dependencies & scripts
+ ├── app.js                   # main server file
+ ├── package.json             # Node dependencies & scripts
  ├── package-lock.json
  ├── .gitignore
- ├── public/ # static assets (CSS, client-JS, images)
- ├── views/ # EJS templates
- └── README.md # this file
+ ├── public/                  # static assets (CSS, client-JS, images)
+ ├── views/                   # EJS templates
+ └── README.md                # this file
 ```
 
 ## 🧮 Prerequisites  
