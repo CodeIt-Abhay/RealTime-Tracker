@@ -46,7 +46,7 @@ RealTime-Tracker is a Node.js + Express + EJS web application that enables real-
 
 -
 
-##🎯 Usage & Customisation
+## 🎯 Usage & Customisation
 
 - In app.js you’ll find the main Express server logic. You can update or extend:
 - Data-fetch logic (e.g., fetch live location or metric from API or DB)
@@ -56,13 +56,13 @@ RealTime-Tracker is a Node.js + Express + EJS web application that enables real-
 
 -
 
-##✅ Why Use This Project?
+## ✅ Why Use This Project?
 
 - Fast sandbox: minimal setup for real-time tracking functionality
 - Flexible: you can plug in your own data source (vehicle tracking, IoT sensor data, live user metrics)
 - Easy to adapt and extend: the use of Express + EJS makes adding new routes, templates and logic straightforward
 
-##🧠 Future Enhancements
+## 🧠 Future Enhancements
 
 - Replace polling with WebSocket communication for true bi-directional real-time updates
 - Add authentication/user-management to secure the tracking dashboard
@@ -70,5 +70,6 @@ RealTime-Tracker is a Node.js + Express + EJS web application that enables real-
 - Add map integration (e.g., Google Maps, Leaflet) for geolocation tracking
 - Responsive UI design and mobile-friendly dashboard
 
-##🙋 Contact
+## 🙋 Contact
+
 Created by Abhay Pratap. For questions or contributions, feel free to open an issue or submit a pull request.
