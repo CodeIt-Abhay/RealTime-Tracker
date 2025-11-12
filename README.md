@@ -11,19 +11,17 @@ RealTime-Tracker is a Node.js + Express + EJS web application that enables real-
 - Simple, modular code structure (see `app.js` + `views` + `public`)  
 - Lightweight and easy to adapt for your tracking scenario
 
--
 
 ## 📁 Repository Structure  
-/
+```/
 ├── app.js # main server file
 ├── package.json # Node dependencies & scripts
 ├── package-lock.json
 ├── .gitignore
 ├── public/ # static assets (CSS, client-JS, images)
 ├── views/ # EJS templates
-└── README.md # this file
+└── README.md # this file```
 
--
 
 ## 🧮 Prerequisites  
 - Node.js (v12+ recommended)  
@@ -44,7 +42,6 @@ RealTime-Tracker is a Node.js + Express + EJS web application that enables real-
 4. Open your browser and navigate to `http://localhost:3000` (or the port you configured)
 5. Modify app.js or add your own routes/views to adapt the app for your tracking scenario
 
--
 
 ## 🎯 Usage & Customisation
 
@@ -54,7 +51,6 @@ RealTime-Tracker is a Node.js + Express + EJS web application that enables real-
 - To integrate WebSockets (e.g. using socket.io), you can install the library and replace the polling logic with socket-based updates
 - Style the UI by editing the files in public/ (CSS, JS) to match your design
 
--
 
 ## ✅ Why Use This Project?
 
@@ -73,3 +69,4 @@ RealTime-Tracker is a Node.js + Express + EJS web application that enables real-
 ## 🙋 Contact
 
 Created by Abhay Pratap. For questions or contributions, feel free to open an issue or submit a pull request.
+
